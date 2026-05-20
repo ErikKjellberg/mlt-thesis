@@ -1,13 +1,21 @@
 import os
+from itertools import combinations
 from datasets import Dataset, DatasetDict, load_dataset, concatenate_datasets
 import torch
 from torch.utils.data.sampler import Sampler
 import numpy as np
 import re
+import json
 import unicodedata
+
+from utils import get_id_to_narrative_dict
+
+DATASET_TYPES = {"polynarrative": "multilabel", "CARDS": "multiclass"}
 
 # The text pre-processing functions below are from the CARDS training notebook
 # (https://github.com/traviscoan/cards/blob/master/fit/roberta/cards_training.ipynb)
+
+
 def remove_between_square_brackets(text):
     return re.sub('\[[^]]*\]', '', text)
 
@@ -62,7 +70,7 @@ def load_polynarrative(
     all_data = dict()
     for partition in partitions:
         partition_data = []
-        for lang in languagess:
+        for lang in languages:
             labels_f = os.path.join(home_path, partition, lang, "subtask-2-annotations.txt")
             if partition == "train":
                 docs_dir = os.path.join(home_path, partition, lang, "raw-documents")
@@ -104,7 +112,7 @@ def load_polynarrative(
     return all_data
 
 
-def load_CARDS_cleaned(data_dir, partitions, exclude_other=False, other_vs_rest=False):
+def load_CARDS(data_dir, partitions, exclude_other=False, other_vs_rest=False):
     def add_narrative_cols(ex):
         if ex["claim"] == "0_0":
             narrative, subnarrative = "0", "0"
@@ -142,6 +150,72 @@ def load_CARDS_cleaned(data_dir, partitions, exclude_other=False, other_vs_rest=
     return dataset
 
 
+def load_data(
+        dataset_name,
+        exclude_other,
+        other_vs_rest,
+        CARDS_path="CC-denial-resources",
+        polynarrative_path="polynarrative",
+        taxonomies_path="taxonomies.json",
+        partitions=None,
+        return_torch_datasets=True):
+    dataset_type = DATASET_TYPES.get(dataset_name)
+    if other_vs_rest:
+        dataset_type = "multiclass"
+    if partitions is None:
+        if dataset_name == "CARDS":
+            partitions = {"training", "test"}
+        elif dataset_name == "polynarrative":
+            partitions = {"train", "dev"}
+
+    with open(taxonomies_path) as f:
+        taxonomies = json.load(f)
+    taxonomy_dict = taxonomies[dataset_name]
+
+    id_to_narrative = get_id_to_narrative_dict(taxonomy_dict, 1, dataset_name, convert_to_num=True)
+    narrative_to_id = {i: n for n, i in id_to_narrative.items()}
+
+    if dataset_name == "polynarrative":
+        dataset = load_polynarrative(
+            polynarrative_path,
+            partitions,
+            narrative_to_id=narrative_to_id,
+            include_language_column=True,
+            exclude_other=exclude_other,
+            other_vs_rest=other_vs_rest)
+
+    elif dataset_name == "CARDS":
+        dataset = load_CARDS(
+            CARDS_path,
+            partitions,
+            exclude_other=exclude_other,
+            other_vs_rest=other_vs_rest)
+
+    id_to_class = get_id_to_class(dataset, dataset_type)
+    class_to_id = {c: i for i, c in id_to_class.items()}
+
+    if return_torch_datasets:
+        dataset_test = None  # only defined for some datasets
+
+        # For models implemented in torch, use these datasets
+        if dataset_type == "multilabel":
+            dataset_train = FlattenedMultiLabelDataset(dataset["train"], narrative_to_class=id_to_class)
+            dataset_dev = FlattenedMultiLabelDataset(dataset["dev"], narrative_to_class=id_to_class)
+            if dataset_name != "polynarrative":
+                dataset_test = FlattenedMultiLabelDataset(dataset["test"], narrative_to_class=id_to_class)
+
+        elif dataset_type == "multiclass":
+            dataset_train = FlattenedMultiClassDataset(dataset["train"], narrative_to_class=id_to_class)
+            dataset_dev = FlattenedMultiClassDataset(dataset["dev"], narrative_to_class=id_to_class)
+            if dataset_name != "polynarrative":
+                dataset_test = FlattenedMultiClassDataset(dataset["test"], narrative_to_class=id_to_class)
+
+        return dataset, (dataset_train, dataset_dev, dataset_test), id_to_class, class_to_id
+
+    else:
+        return dataset, id_to_class, class_to_id
+
+
 def get_id_to_class(dataset, dataset_type):
     # Find all unique labels
     unique = set()
@@ -159,7 +233,7 @@ def get_id_to_class(dataset, dataset_type):
     return id_to_class
 
 
-class FlattenedSinglelabelDataset(torch.utils.data.Dataset):
+class FlattenedMultiClassDataset(torch.utils.data.Dataset):
     def __init__(self, dataset, narrative_to_class=None, unique=None):
         if narrative_to_class is not None:
             self.narrative_to_class = narrative_to_class
@@ -185,7 +259,7 @@ class FlattenedSinglelabelDataset(torch.utils.data.Dataset):
         return self.dataset[idx].get("text"), self.dataset[idx].get("label")
 
 
-class FlattenedMultilabelDataset(torch.utils.data.Dataset):
+class FlattenedMultiLabelDataset(torch.utils.data.Dataset):
     def __init__(self, dataset, narrative_to_class=None, unique=None):
         if narrative_to_class is not None:
             self.narrative_to_class = narrative_to_class

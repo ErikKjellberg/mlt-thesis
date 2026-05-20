@@ -1,0 +1,387 @@
+{
+    "polynarrative": {
+        "1": {
+            "description": "Criticism of climate policies: Statements that question the effectiveness, economic impact, or motives behind climate policies.",
+            "a": {
+                "description": "Climate policies are ineffective: Statements suggesting that climate policies fail to achieve their intended environmental goals. "
+            },
+            "b": {
+                "description": "Climate policies have negative impact on the economy: Statements claiming that climate policies lead to negative economic outcomes. "
+            },
+            "c": {
+                "description": "Climate policies are only for profit: Statements that argue climate policies are driven by financial or corporate gain rather than genuine environmental concerns. "
+            }
+        },
+        "2": {
+            "description": "Criticism of institutions and authorities: Statements that challenge the competence, integrity, or intentions of various institutions and authorities in relation to climate change. ",
+            "a": {
+                "description": "Criticism of the EU: Statements that express disapproval or distrust of the EU\u2019s role or approach to climate change or the EU in general. "
+            },
+            "b": {
+                "description": "Criticism of international entities: Statements that criticize the role and influence of international entities on climate policy. "
+            },
+            "c": {
+                "description": "Criticism of national governments: Statements that disapprove of the ways national governments handle climate change. "
+            },
+            "d": {
+                "description": "Criticism of political organizations and figures: Statements that discredit political organizations and figures in the context of climate change debate. "
+            }
+        },
+        "3": {
+            "description": "Climate change is beneficial: Statements that present arguments that support that changes in climate can have positive effects as well. ",
+            "a": {
+                "description": "CO2 is beneficial: Statements suggesting that increased CO2 levels have positive impacts on the environment. "
+            },
+            "b": {
+                "description": "Temperature increase is beneficial: Statements claiming that rising global temperatures can have positive effects.  "
+            }
+        },
+        "4": {
+            "description": "Downplaying climate change: Statements that minimize the significance or impact of climate change. ",
+            "a": {
+                "description": "Climate cycles are natural: Statements suggesting that climate change is a natural and cyclical occurrence. "
+            },
+            "b": {
+                "description": "Weather suggests the trend is global cooling: Statements using local or shortterm weather patterns to argue against global warming. "
+            },
+            "c": {
+                "description": "Temperature increase does not have significant impact: Statements claiming that the increase in temperature is not going to have any noticeable effect in nature. "
+            },
+            "d": {
+                "description": "CO2 concentrations are too small to have an impact: Statements claiming that the concentrations of CO2 will have a negligible effect. "
+            },
+            "e": {
+                "description": "Human activities do not impact climate change: Statements that support that climate change is not caused by human activity. "
+            },
+            "f": {
+                "description": "Ice is not melting: Statements claiming that there is not melting of ice. "
+            },
+            "g": {
+                "description": "Sea levels are not rising: Statements denying that sea levels have risen (or will rise). "
+            },
+            "h": {
+                "description": "Humans and nature will adapt to the changes: Statements claiming that whatever the changes in climate humans or nature will manage to find solutions to adapt. "
+            }
+        },
+        "5": {
+            "description": "Questioning the measurements and science: Statements that raise doubts about the scientific methods, data, and consensus on climate change. ",
+            "a": {
+                "description": "Methodologies/metrics used are unreliable/faulty: Statements claiming that the scientific methodologies and metrics used to measure climate change are flawed or unreliable. "
+            },
+            "b": {
+                "description": "Data shows no temperature increase: Statements asserting that available data does not support the claim of global temperature increase. "
+            },
+            "c": {
+                "description": "Greenhouse effect/carbon dioxide do not drive climate change: Statements asserting that available data does not support the claim of global temperature increase. "
+            },
+            "d": {
+                "description": "Scientific community is unreliable: Statements discrediting scientists, the scientific community and their actions. "
+            }
+        },
+        "6": {
+            "description": "Criticism of climate movement: Statements that challenge the motives, integrity, or impact of the climate movement. ",
+            "a": {
+                "description": "Climate movement is alarmist: Statements suggesting that the climate movement exaggerates the severity of climate change for dramatic effect. "
+            },
+            "b": {
+                "description": "Climate movement is corrupt: Statements alleging that the climate movement is influenced by ulterior motives, by corruption or by unethical practices. "
+            },
+            "c": {
+                "description": "Ad hominem attacks on key activists: Statements attacking the reputation of key figures (such as scientists, activists, politicians or public figures). "
+            }
+        },
+        "7": {
+            "description": "Controversy about green technologies: Statements that express skepticism or criticism of environmentally friendly technologies. ",
+            "a": {
+                "description": "Renewable energy is dangerous: Statements claiming that renewable energy sources pose significant risks or dangers. "
+            },
+            "b": {
+                "description": "Renewable energy is unreliable: Statements asserting that renewable energy sources are not dependable for widespread adoption. "
+            },
+            "c": {
+                "description": "Renewable energy is costly: Statements asserting that renewable energy sources are too expensive, inefficient and worth adopting for widespread use. "
+            },
+            "d": {
+                "description": "Nuclear energy is not climate friendly: Statements asserting that nuclear sources are or should not be considered as good for the climate. "
+            }
+        },
+        "8": {
+            "description": "Hidden plots by secret schemes of powerful groups: Statements that propose secret plots or hidden agendas related to climate change initiated by powerful entities or groups. ",
+            "a": {
+                "description": "Blaming global elites: Statements attributing climate change agendas to secretive and powerful global elites. "
+            },
+            "b": {
+                "description": "Climate agenda has hidden motives: Claims that the push for climate action is driven by ulterior motives, such as political power or population control. "
+            }
+        },
+        "9": {
+            "description": "Amplifying Climate Fears: Statements that emphasize and amplify fears about the consequences of climate change. ",
+            "a": {
+                "description": "Earth will be uninhabitable soon: Statements predicting that the Earth will become uninhabitable in the near future due to climate change. "
+            },
+            "b": {
+                "description": "Amplifying existing fears of global warming: Statements that are using fears related to possible climate worries to spread panic. "
+            },
+            "c": {
+                "description": "Doomsday scenarios for humans: Statements presenting intense catastrophic scenarios as results of climate change. "
+            },
+            "d": {
+                "description": "Whatever we do it is already too late: Statements that minimize the urgency of addressing climate change by suggesting that any action taken at this point is futile or too late to make a meaningful impact. "
+            }
+        },
+        "10": {
+            "description": "Green policies are geopolitical instruments: Statements claiming that that environmental policies and initiatives are used as tools for geopolitical power and influence rather than genuine environmental concern. ",
+            "a": {
+                "description": "Climate-related international relations are abusive/exploitative: Statements criticizing international relations related to climate change as exploitative or economically abusive. "
+            },
+            "b": {
+                "description": "Green activities are a form of neo-colonialism: Statements suggesting that green initiatives are a way for developed countries to exert control and influence over developing nations, a modern form of colonial practices."
+            }
+        }
+    },
+    "CARDS": {
+        "1": {
+            "description": "Global warming is not happening",
+            "a": {
+                "description": "Ice/permafrost/snow cover isn't melting",
+                "1": {
+                    "description": "Antarctica is gaining ice/not warming"
+                },
+                "2": {
+                    "description": "Greenland is gaining ice/not melting"
+                },
+                "3": {
+                    "description": "Arctic sea ice isn't vanishing"
+                },
+                "4": {
+                    "description": "Glaciers aren't vanishing"
+                }
+            },
+            "b": {
+                "description": "We're heading into an ice age/global cooling"
+            },
+            "c": {
+                "description": "Weather is cold/snowing"
+            },
+            "d": {
+                "description": "Climate hasn't warmed/changed over the last (few) decade(s)"
+            },
+            "e": {
+                "description": "Oceans are cooling/not warming"
+            },
+            "f": {
+                "description": "Sea level rise is exaggerated/not accelerating"
+            },
+            "g": {
+                "description": "Extreme weather isn't increasing/has happened before/isn't linked to climate change"
+            },
+            "h": {
+                "description": "They changed the name from 'global warming' to 'climate change'"
+            }
+        },
+        "2": {
+            "description": "Human greenhouse gases are not causing climate change",
+            "a": {
+                "description": "It's natural cycles/variation",
+                "1": {
+                    "description": "It's the sun/cosmic rays/astronomical"
+                },
+                "2": {
+                    "description": "It's geological (includes volcanoes)"
+                },
+                "3": {
+                    "description": "It's the ocean/internal variability"
+                },
+                "4": {
+                    "description": "Climate has changed naturally/been warm in the past"
+                },
+                "5": {
+                    "description": "Human CO2 emissions are tiny compared to natural CO2 emission"
+                }
+            },
+            "b": {
+                "description": "It's non-greenhouse gas human climate forcings (aerosols, land use)"
+            },
+            "c": {
+                "description": "There's no evidence for greenhouse effect/carbon dioxide driving climate change",
+                "1": {
+                    "description": "Carbon dioxide is just a trace gas"
+                },
+                "2": {
+                    "description": "Greenhouse effect is saturated/logarithmic"
+                },
+                "3": {
+                    "description": "Carbon dioxide lags/not correlated with climate change"
+                },
+                "4": {
+                    "description": "Water vapor is the most powerful greenhouse gas"
+                },
+                "5": {
+                    "description": "There's no tropospheric hot spot"
+                },
+                "6": {
+                    "description": "CO2 was higher in the past"
+                }
+            },
+            "d": {
+                "description": "CO2 is not rising/ocean pH is not falling"
+            },
+            "e": {
+                "description": "Human CO2 emissions are miniscule/not raising atmospheric CO2"
+            }
+        },
+        "3": {
+            "description": "Climate impacts/global warming is beneficial/not bad",
+            "a": {
+                "description": "Climate sensitivity is low/negative feedbacks reduce warming"
+            },
+            "b": {
+                "description": "Species/plants/reefs aren't showing climate impacts yet/are benefiting from climate change",
+                "1": {
+                    "description": "Species can adapt to global warming"
+                },
+                "2": {
+                    "description": "Polar bears are not in danger from climate change"
+                },
+                "3": {
+                    "description": "Ocean acidification/coral impacts aren't serious"
+                }
+            },
+            "c": {
+                "description": "CO2 is beneficial/not a pollutant",
+                "1": {
+                    "description": "CO2 is plant food"
+                }
+            },
+            "d": {
+                "description": "It's only a few degrees (or less)"
+            },
+            "e": {
+                "description": "Climate change does not contribute to human conflict/threaten national security"
+            },
+            "f": {
+                "description": "Climate change doesn't negatively impact health"
+            }
+        },
+        "4": {
+            "description": "Climate solutions won't work",
+            "a": {
+                "description": "Climate policies (mitigation or adaptation) are harmful",
+                "1": {
+                    "description": "Climate policy will increase costs/harm economy/kill jobs"
+                },
+                "2": {
+                    "description": "Proposed action would weaken national security/national sovereignty/cause conflict"
+                },
+                "3": {
+                    "description": "Proposed action would actually harm the environment and species"
+                },
+                "4": {
+                    "description": "Future generations will be richer and better able to adapt"
+                },
+                "5": {
+                    "description": "Climate policy limits liberty/freedom/capitalism"
+                }
+            },
+            "b": {
+                "description": "Climate policies are ineffective/flawed",
+                "1": {
+                    "description": "Clean energy/green jobs/businesses won't work"
+                },
+                "2": {
+                    "description": "Markets/private sector are economically more efficient than government policies"
+                },
+                "3": {
+                    "description": "Climate policy will make negligible difference to climate change"
+                },
+                "4": {
+                    "description": "A single country/region only contributes a small % of global emissions"
+                },
+                "5": {
+                    "description": "Better to adapt/geoengineer/increase resiliency"
+                },
+                "6": {
+                    "description": "Climate action is pointless because of China/India/other countries' emissions"
+                },
+                "7": {
+                    "description": "We should invest in technology/reduce poverty/disease first"
+                }
+            },
+            "c": {
+                "description": "It's too hard to solve",
+                "1": {
+                    "description": "Climate policy is politically/legally/economically/technically too difficult"
+                },
+                "2": {
+                    "description": "Media/public support/acceptance is low/decreasing"
+                }
+            },
+            "d": {
+                "description": "Clean energy technology/biofuels won't work",
+                "1": {
+                    "description": "Clean energy/biofuels are too expensive/unreliable/counterproductive/harmful"
+                },
+                "2": {
+                    "description": "Carbon Capture & Sequestration (CCS) is unproven/expensive"
+                }
+            },
+            "e": {
+                "description": "People need energy (e.g., from fossil fuels/nuclear)",
+                "1": {
+                    "description": "Fossil fuel reserves are plentiful"
+                },
+                "2": {
+                    "description": "Fossil fuels are cheap/good/safe for society/economy/environment"
+                },
+                "3": {
+                    "description": "Nuclear power is safe/good for society/economy/environment"
+                }
+            }
+        },
+        "5": {
+            "description": "Climate movement/science is unreliable",
+            "a": {
+                "description": "Climate-related science is uncertain/unsound/unreliable (data, methods & models)",
+                "1": {
+                    "description": "There's no scientific consensus on climate/the science isn't settled"
+                },
+                "2": {
+                    "description": "Proxy data is unreliable (includes hockey stick)"
+                },
+                "3": {
+                    "description": "Temperature record is unreliable"
+                },
+                "4": {
+                    "description": "Models are wrong/unreliable/uncertain"
+                }
+            },
+            "b": {
+                "description": "Climate movement is alarmist/wrong/political/biased/hypocritical (people or groups)",
+                "1": {
+                    "description": "Climate movement is religion"
+                },
+                "2": {
+                    "description": "Media (including bloggers) is alarmist/wrong/political/biased"
+                },
+                "3": {
+                    "description": "Politicians/government/UN are alarmist/wrong/political/biased"
+                },
+                "4": {
+                    "description": "Environmentalists are alarmist/wrong/political/biased"
+                },
+                "5": {
+                    "description": "Scientists/academics are alarmist/wrong/political/biased"
+                }
+            },
+            "c": {
+                "description": "Climate change (science or policy) is a conspiracy (deception)",
+                "1": {
+                    "description": "Climate policy/renewables is a hoax/scam/conspiracy/secretive"
+                },
+                "2": {
+                    "description": "Climate science is a hoax/scam/conspiracy/secretive/money-motivated (includes climategate)"
+                }
+            }
+        }
+    }
+}

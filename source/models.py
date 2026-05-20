@@ -11,7 +11,7 @@ import json
 import getpass
 import logging
 from huggingface_hub import login
-from transformers import AutoTokenizer, AutoModelForCausalLM, PreTrainedModel, PretrainedConfig, pipeline
+from transformers import AutoModel, AutoTokenizer, AutoModelForCausalLM, PreTrainedModel, PretrainedConfig, pipeline
 from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_deepseek import ChatDeepSeek

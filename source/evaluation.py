@@ -6,8 +6,57 @@ import numpy as np
 from tqdm import tqdm
 from torch.cuda.amp import autocast, GradScaler
 
-from utils import to_coarse, label_set_to_multihot, logits_to_multihot, multihot_to_list_of_classes
-from dataloaders import get_custom_batched_tokenized
+from utils import (
+    to_coarse, 
+    label_set_to_multihot, 
+    logits_to_multihot, 
+    logits_to_multihot_allow_no_pred, 
+    multihot_to_list_of_classes
+)
+from data_handling import get_custom_batched_tokenized
+
+# Define additional model performance scores (F1) (copied from CARDS notebook)
+def f1_multiclass_macro(labels, preds):
+    return f1_score(labels, preds, average='macro')
+def f1_multiclass_micro(labels, preds):
+    return f1_score(labels, preds, average='micro')
+def f1_multiclass_weighted(labels, preds):
+    return f1_score(labels, preds, average='weighted')
+def f1_class(labels, preds):
+    return f1_score(labels, preds, average=None)
+def precision(labels, preds):
+    return precision_score(labels, preds, average='macro')
+def recall(labels, preds):
+    return recall_score(labels, preds, average='macro')
+
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    preds = np.argmax(logits, axis=1)
+
+    return {
+        "acc": accuracy_score(labels, preds),
+        "f1_macro": f1_multiclass_macro(labels, preds),
+        "f1_micro": f1_multiclass_micro(labels, preds),
+        "f1_weighted": f1_multiclass_weighted(labels, preds),
+        "precision_macro": precision(labels, preds),
+        "recall_macro": recall(labels, preds),
+        "f1_per_class": ",".join([f"{s:.4f}" for s in f1_score(labels, preds, average=None)]),
+    }
+
+def compute_metrics_multilabel(eval_pred, min_p=0.5):
+    logits, labels = eval_pred
+    preds = np.array([logits_to_multihot(torch.Tensor(p), min_p=min_p) for p in logits])
+
+    return {
+        "acc": accuracy_score(labels, preds),
+        "f1_macro": f1_score(labels, preds, average="macro"),
+        "f1_samples": f1_score(labels, preds, average="samples"),
+        "f1_weighted": f1_score(labels, preds, average="weighted"),
+        "precision_macro": precision_score(labels, preds, average="macro", zero_division=0),
+        "recall_macro": recall_score(labels, preds, average="macro", zero_division=0),
+        "f1_per_class": ",".join([f"{s:.4f}" for s in f1_score(labels, preds, average=None)]),
+    }
 
 
 def get_predictions(model, dataloader, dataset_type, min_p=0.5, extract_embeddings=False):
@@ -61,11 +110,78 @@ def get_predictions_double_classifier(
     return truth, final_preds
 
 
-def get_classes_and_embeddings(model, dataloader, dataset_type, aggregation=None):
+def get_multiclass_predictions_multilabel(
+        dataloader, 
+        tokenizer, 
+        model, 
+        aggregation="mean", 
+        min_p=0.5,
+        max_length=256, 
+        overlap=0.4):
     """
-        Takes an SBERT model and a dataloader, tokenizes examples and return embeddings and true labels.
+        Use this for evaluating a multiclass (CARDS) model on a multilabel (PolyNarrative) dataset.
+
+        Excepts a dataloader that yields a tuple (inputs, labels), where
+            inputs = {
+                "input_ids": Tensor[n_chunks, seq_len],
+                "attention_mask": Tensor[n_chunks, seq_len],
+                "lengths": list of length n_chunks
+            }
     """
-    def tokenize_with_sliding_window(tokenizer, text, max_length, overlap=0.4):
+    stride_tokens = int(max_length * overlap)
+    preds = []
+    truth = []
+    for ex in dataloader:
+        # Each example consists of a text and a set of labels
+        # tokenized becomes a tensor of shape [n_chunks, max_length]
+        tokenized = tokenizer(ex[0],
+            truncation=True,
+            max_length=max_length,
+            stride=stride_tokens,
+            padding="max_length",
+            return_tensors="pt"
+        )
+        features = {k:tokenized[k].to("cuda") for k in {"input_ids", "attention_mask"}}
+        if aggregation == "mean":
+            logits = model(**features, aggregation=aggregation, lengths=[tokenized["input_ids"].shape[0]]).logits
+            pred = logits_to_multihot(logits.cpu().long(), min_p=min_p)
+        elif aggregation == "union":
+            # logits is of shape [n_chunks, max_length]
+            logits = model(**features, aggregation="none").logits
+            pred_per_chunk = logits_to_multihot_allow_no_pred(logits.cpu().long(), min_p=min_p)
+            pred = torch.any(pred_per_chunk, dim=0).int()
+            if pred.sum() == 0:
+                pred[logits.sum(dim=0).argmax()] = 1
+            
+        preds.append(pred)
+        truth.extend(ex[1])
+    return np.array(truth), np.array(preds)
+
+
+def get_multilabel_predictions_multiclass(dataloader, model, max_length=256, overlap=0.4):
+    """
+        Use this for evaluating a multi-label model on a multiclass dataset.
+
+        Excepts a dataloader that with already tokenized examples.
+    """
+    stride_tokens = int(max_length * overlap)
+    preds = []
+    truth = []
+    model.eval()
+    for ex in dataloader:
+        features = ex | {k:ex[k].to("cuda") for k in {"input_ids", "attention_mask"}}
+        logits = model(**features).logits
+        pred = logits.argmax(dim=1).cpu().numpy()
+        preds.extend(pred)
+        truth.extend(ex["labels"])
+    return np.array(truth), np.array(preds)
+
+
+def get_classes_and_embeddings(model, dataloader, dataset_type, aggregation=None, overlap=0.4):
+    """
+        Takes an SBERT model and a dataloader, tokenizes examples and returns embeddings and true labels.
+    """
+    def tokenize_with_sliding_window(tokenizer, text, max_length, overlap):
         # return_overflowing_tokens splits long docs into multiple chunks
         stride_tokens = int(overlap * max_length)
         enc = tokenizer(
@@ -88,7 +204,7 @@ def get_classes_and_embeddings(model, dataloader, dataset_type, aggregation=None
             inputs, labels = data
             if dataset_type == "multilabel":
                 # For PolyNarrative, we need to split the document into multiple chunks
-                encoded = tokenize_with_sliding_window(model.tokenizer, inputs, model.max_seq_length)
+                encoded = tokenize_with_sliding_window(model.tokenizer, inputs, model.max_seq_length, overlap=overlap)
                 chunks = [model.tokenizer.decode(e) for e in encoded["input_ids"]]
                 e = model.encode(chunks)
                 if aggregation == "mean":
@@ -99,7 +215,7 @@ def get_classes_and_embeddings(model, dataloader, dataset_type, aggregation=None
             truth.append(list(labels))
             embs.append(e)
 
-    truth = np.concatenate(truth)  # This might lead to problems if using two different kinds of datasets
+    truth = np.concatenate(truth)
     if dataset_type == "multiclass":
         embs = np.concatenate(embs)
     elif aggregation == "mean":
@@ -150,48 +266,6 @@ def get_predictions_sbert_binary_classifier(
         return truth, final_preds, embs
     else:
         return truth, final_preds
-
-
-def get_multilabel_predictions_(
-        dataloader, tokenizer, model, aggregation="mean", min_p=0.2, max_length=256, overlap=0.4):
-    """
-        Use this for evaluating a multiclass (CARDS) model on a multilabel (PolyNarrative) dataset.
-
-        Excepts a dataloader that yields a tuple (inputs, labels), where
-            inputs = {
-                "input_ids": Tensor[n_chunks, seq_len],
-                "attention_mask": Tensor[n_chunks, seq_len],
-                "lengths": list of length n_chunks
-            }
-    """
-    stride_tokens = int(max_length * overlap)
-    preds = []
-    truth = []
-    for ex in dataloader:
-        # Each example consists of a text and a set of labels
-        # `tokenized` becomes a tensor of shape [n_chunks, max_length]
-        tokenized = tokenizer(ex[0],
-                              truncation=True,
-                              max_length=max_length,
-                              stride=stride_tokens,
-                              padding="max_length",
-                              return_tensors="pt"
-                              )
-        features = {k: tokenized[k].to("cuda") for k in {"input_ids", "attention_mask"}}
-        if aggregation == "mean":
-            logits = model(**features, aggregation=aggregation).logits
-            pred = logits_to_multihot(logits.cpu().long(), min_p=min_p)
-        elif aggregation == "union":
-            # logits is of shape [n_chunks, max_length]
-            logits = model(**features, aggregation="none").logits
-            pred_per_chunk = logits_to_multihot(logits.cpu().long(), min_p=min_p)
-            pred = torch.any(pred_per_chunk, dim=0).int()
-        else:
-            raise ValueError("`aggregation` must be one of 'mean' and 'union'")
-
-        preds.append(pred)
-        truth.extend(ex[1])
-    return np.array(truth), np.array(preds)
 
 
 def evaluate_f1(truth, preds, class_to_id, dataset_type, coarse=False):

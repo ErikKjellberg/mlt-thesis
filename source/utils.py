@@ -33,8 +33,28 @@ def logits_to_multihot(logits, min_p=0.5):
     return pred.int()
 
 
+def logits_to_multihot_allow_no_pred(logits, min_p=0.5):
+    # Does not force predictions via argmax
+    scores = logits.sigmoid()
+    pred = torch.zeros_like(scores)
+    above_threshold = (scores > min_p)
+    pred[above_threshold] = 1
+    return pred.int()
+
+
 def multihot_to_list_of_classes(multihot):
     return np.where(multihot == 1)[0]
+
+
+def find_best_p(eval_f, low, high, step):
+    maximum = 0
+    maximizing_v = None
+    for v in np.arange(low, high, step):
+        s = eval_f(v)
+        if s > maximum:
+            maximum = s
+            maximizing_v = v
+    return maximum, maximizing_v
 
 
 def get_taxonomy_string(taxonomy_dict, max_depth=1):
